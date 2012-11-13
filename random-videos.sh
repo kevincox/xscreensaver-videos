@@ -28,10 +28,41 @@ ext='\(avi\|mkv\|mp4\)' # File extensions to play as movies (file'ing each file
                         # is too slow).  Add more and send a pull request.
 
 args='-really-quiet'
-#args="$args -fs"
-#args="$args -nosound" # Uncomment out to disable sound.
+[ "$XSCREENSAVER_WINDOW" ] && args="$args -nostop-xscreensaver -wid $XSCREENSAVER_WINDOW"
 
-[ "$2" ] && args="$args -nostop-xscreensaver -wid $2"
+usage ()
+{
+	echo "Usage: $0 [options] directory
+	-q --no-sound:
+		Disable sound output.
+	-f --full-screen:
+		Make playback full screen.  Usefull when not run from
+		xscreensaver.
+	-h --help:
+		This message."
+	exit 1
+}
+
+OPTS=$(getopt -o qfh -l no-sound,full-screen,help -- "$@")
+[ $? == 0 ] || usage
+
+eval set -- "$OPTS"
+while true ; do
+	case "$1" in
+		-h|--help)
+			usage
+			shift;;
+		-q|--no-sound)
+			args="$args -nosound"
+			shift;;
+		-f|--full-screen)
+			args="$args -fs"
+			shift;;
+		--) shift; break;;
+	esac
+done
+
+dir=${1:-~/"Videos/"}
 
 OIFS=$IFS
 
@@ -42,7 +73,8 @@ do
 	IFS='
 	'
 
-	[ "$vids" ] || vids="$(find "$1" -type f -iregex ".*\\.$ext\$" | shuf)"
+	[ "$vids" ] || vids="$(find "$dir" -type f -iregex ".*\\.$ext\$" | shuf)"
+	[ "$vids" ] || { echo "Error: No videos found." ; exit 1 ; }
 
 	vid=$(echo "$vids" | head -n1)
 	nvids=$(echo "$vids" | wc -l)
