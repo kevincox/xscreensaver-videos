@@ -28,11 +28,11 @@ ext='\(avi\|mkv\|mp4\)' # File extensions to play as movies (file'ing each file
                         # is too slow).  Add more and send a pull request.
 
 dir=( )
-args='-really-quiet'
+args=(-really-quiet)
 
 usage ()
 {
-	echo "Usage: $0 [options] directory
+	echo "Usage: $0 [options] directory...
 	-q --no-sound:
 		Disable sound output.
 	-f --full-screen:
@@ -54,13 +54,13 @@ while true ; do
 			usage
 			shift;;
 		-q|--no-sound)
-			args="$args -nosound"
+			args+=(-nosound)
 			shift;;
 		-f|--full-screen)
 			args="$args -fs"
 			shift;;
 		-d)
-			dir=("${dir[@]}" "$2")
+			dir+=("$2")
 			shift 2;;
 		--window-id)
 			XSCREENSAVER_WINDOW="$2"
@@ -73,18 +73,15 @@ done
 
 [ "$XSCREENSAVER_WINDOW" ] && args="$args -nostop-xscreensaver -wid $XSCREENSAVER_WINDOW"
 
-dir=("${dir[@]}" "$@")                    # Add positional parameters.
+dir+=("$@")                               # Add positional parameters.
 [ ${#dir[@]} == 0 ] && dir=( ~/"Videos" ) # Default
 
-OIFS=$IFS
+IFS=$'\n'
 
 trap : SIGTERM SIGINT SIGHUP
-	echo mplayer $args "$vid" & >> /tmp/log.txt
 
 while (true) #!(keystate lshift)
 do
-	IFS='
-	'
 
 	[ "$vids" ] || vids="$(find "${dir[@]}" -type f -iregex ".*\\.$ext\$" | shuf)"
 	[ "$vids" ] || { echo "Error: No videos found." ; exit 1 ; }
@@ -93,9 +90,8 @@ do
 	nvids=$(echo "$vids" | wc -l)
 	vids=$(echo "$vids" | tail -n$((nvids-1)))
 
-	IFS="$OIFS"
-	#echo mplayer $args "$vid" & >> /tmp/log.txt
-	mplayer $args "$vid" &
+	#echo mplayer $args "$vid" &
+	mplayer "${args[@]}" "$vid" &
 	pid=$!
 
 	wait $pid
