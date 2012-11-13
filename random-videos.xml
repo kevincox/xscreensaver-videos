@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<screensaver name="randomvideos" _label="RandomVideos">
+	<boolean id="sound" _label="Play sound" default="false"
+            arg-unset="--no-sound"
+	/>
+	<string id="directory" _label="Video Directory"
+		arg="-d %"
+	/>
+
+	<_description>
+Plays a random video from the given directory.
+
+Written by Kevin Cox; https://github.com/kevincox/xscreensaver-videos.
+	</_description>
+</screensaver>
