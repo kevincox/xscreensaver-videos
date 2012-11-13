@@ -71,7 +71,7 @@ while true ; do
 	esac
 done
 
-[ "$XSCREENSAVER_WINDOW" ] && args="$args -nostop-xscreensaver -wid $XSCREENSAVER_WINDOW"
+[ "$XSCREENSAVER_WINDOW" ] && args+=(-nostop-xscreensaver -wid "$XSCREENSAVER_WINDOW")
 
 dir+=("$@")                               # Add positional parameters.
 [ ${#dir[@]} == 0 ] && dir=( ~/"Videos" ) # Default
@@ -90,7 +90,7 @@ do
 	nvids=$(echo "$vids" | wc -l)
 	vids=$(echo "$vids" | tail -n$((nvids-1)))
 
-	#echo mplayer $args "$vid" &
+	#echo mplayer "${args[@]}" "$vid" &
 	mplayer "${args[@]}" "$vid" &
 	pid=$!
 
