@@ -24,7 +24,7 @@
 #                                                                              #
 ################################################################################
 
-ext='\(avi\|mkv\|mp4\)' # File extensions to play as movies (file'ing each file
+ext='\(avi\|mkv\|mp4\|webm\)' # File extensions to play as movies (file'ing each file
                         # is too slow).  Add more and send a pull request.
 
 dir=( )
